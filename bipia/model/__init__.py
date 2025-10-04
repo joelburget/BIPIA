@@ -4,9 +4,10 @@
 import yaml
 from pathlib import Path
 from collections import OrderedDict
-from accelerate.logging import get_logger
+import logging
 
 from .gpt import GPT35, GPT4, GPT35WOSystem, GPT4WOSystem
+
 # Import vLLM-based models lazily/optionally so the package can be installed
 # without GPU-specific dependencies (vllm, deepspeed).
 try:
@@ -29,7 +30,7 @@ except Exception:  # ImportError and any runtime import issues from vllm
     _VLLM_AVAILABLE = False
 from .llm_worker import RwkvModel, OASST, ChatGLM, FastChatT5
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 LLM_NAME_TO_CLASS = OrderedDict(
     [
