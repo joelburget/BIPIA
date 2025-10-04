@@ -9,8 +9,6 @@ from .qa import QAIPIADataset
 from .table import TableIPIABuilder
 from .abstract import AbstractIPIADataset
 
-from .utils import DefaultDataCollator, DataCollatorWithPadding
-
 
 BUILDER_TO_CLASS = OrderedDict(
     [
