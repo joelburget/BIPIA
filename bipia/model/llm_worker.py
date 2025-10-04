@@ -40,7 +40,7 @@ class LLMModel(BaseModel):
         self.model = PeftModel.from_pretrained(
             self.model,
             self.config["lora_weights"],
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
         )
 
     @torch.no_grad()
@@ -49,7 +49,7 @@ class LLMModel(BaseModel):
         delta = AutoModelForCausalLM.from_pretrained(
             self.config["delta_weights"],
             load_in_8bit=self.config["load_8bit"],
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             device_map={"": torch.device("cpu")},
             low_cpu_mem_usage=True,
         )
@@ -68,7 +68,7 @@ class LLMModel(BaseModel):
             self.config["model_name"],
             load_in_8bit=self.config["load_8bit"],
             device_map="auto",
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             low_cpu_mem_usage=True,
         )
 
@@ -291,7 +291,7 @@ class ChatGLM(LLMModel):
             self.config["model_name"],
             load_in_8bit=self.config["load_8bit"],
             device_map="auto",
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             low_cpu_mem_usage=True,
             trust_remote_code=True,
         )
