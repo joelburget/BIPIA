@@ -7,12 +7,12 @@ import os
 import re
 import time
 import openai
-from openai.error import (
-    RateLimitError,
-    InvalidRequestError,
-    Timeout,
-    APIConnectionError,
-    ServiceUnavailableError,
+from openai import (
+    # RateLimitError,
+    # InvalidRequestError,
+    # Timeout,
+    # APIConnectionError,
+    # ServiceUnavailableError,
     APIError,
 )
 
@@ -62,26 +62,26 @@ class GPTModel(BaseModel):
                     presence_penalty=presence_penalty,
                 )
                 success = True
-            except RateLimitError as e:
-                # logger.warning(e, exc_info=True)
-                retry_time = get_retry_time(str(e))
-                time.sleep(retry_time)
-            except Timeout as e:
-                logger.debug(e, exc_info=True)
-                time.sleep(1)
-            except APIConnectionError as e:
-                logger.debug(e, exc_info=True)
-                time.sleep(1)
+            # except RateLimitError as e:
+            #     # logger.warning(e, exc_info=True)
+            #     retry_time = get_retry_time(str(e))
+            #     time.sleep(retry_time)
+            # except Timeout as e:
+            #     logger.debug(e, exc_info=True)
+            #     time.sleep(1)
+            # except APIConnectionError as e:
+            #     logger.debug(e, exc_info=True)
+            #     time.sleep(1)
             except APIError as e:
                 logger.debug(e, exc_info=True)
                 time.sleep(1)
-            except ServiceUnavailableError as e:
-                logger.debug(e, exc_info=True)
-                time.sleep(1)
-            except InvalidRequestError as e:
-                logger.warning(e, exc_info=True)
-                success = True
-                response = {"choices": []}
+            # except ServiceUnavailableError as e:
+            #     logger.debug(e, exc_info=True)
+            #     time.sleep(1)
+            # except InvalidRequestError as e:
+            #     logger.warning(e, exc_info=True)
+            #     success = True
+            #     response = {"choices": []}
             except Exception as e:
                 logger.warning(e, exc_info=True)
                 success = True
@@ -121,26 +121,26 @@ class GPTModel(BaseModel):
                     stop=stop,
                 )
                 success = True
-            except RateLimitError as e:
-                # logger.warning(e, exc_info=True)
-                retry_time = get_retry_time(str(e))
-                time.sleep(retry_time)
-            except Timeout as e:
-                logger.debug(e, exc_info=True)
-                time.sleep(1)
-            except APIConnectionError as e:
-                logger.debug(e, exc_info=True)
-                time.sleep(1)
+            # except RateLimitError as e:
+            #     # logger.warning(e, exc_info=True)
+            #     retry_time = get_retry_time(str(e))
+            #     time.sleep(retry_time)
+            # except Timeout as e:
+            #     logger.debug(e, exc_info=True)
+            #     time.sleep(1)
+            # except APIConnectionError as e:
+            #     logger.debug(e, exc_info=True)
+            #     time.sleep(1)
             except APIError as e:
                 logger.debug(e, exc_info=True)
                 time.sleep(1)
-            except ServiceUnavailableError as e:
-                logger.debug(e, exc_info=True)
-                time.sleep(1)
-            except InvalidRequestError as e:
-                logger.warning(e, exc_info=True)
-                success = True
-                response = {"choices": []}
+            # except ServiceUnavailableError as e:
+            #     logger.debug(e, exc_info=True)
+            #     time.sleep(1)
+            # except InvalidRequestError as e:
+            #     logger.warning(e, exc_info=True)
+            #     success = True
+            #     response = {"choices": []}
             except Exception as e:
                 logger.warning(e, exc_info=True)
                 success = True

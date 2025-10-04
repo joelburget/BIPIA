@@ -7,18 +7,26 @@ from collections import OrderedDict
 from accelerate.logging import get_logger
 
 from .gpt import GPT35, GPT4, GPT35WOSystem, GPT4WOSystem
-from .llama import (
-    Alpaca,
-    Vicuna,
-    Baize,
-    StableVicuna,
-    Koala,
-    GPT4ALL,
-    Wizard,
-    Guanaco,
-    Llama2,
-)
-from .vllm_worker import Dolly, StableLM, MPT, Mistral
+# Import vLLM-based models lazily/optionally so the package can be installed
+# without GPU-specific dependencies (vllm, deepspeed).
+try:
+    from .llama import (
+        Alpaca,
+        Vicuna,
+        Baize,
+        StableVicuna,
+        Koala,
+        GPT4ALL,
+        Wizard,
+        Guanaco,
+        Llama2,
+    )
+    from .vllm_worker import Dolly, StableLM, MPT, Mistral
+    _VLLM_AVAILABLE = True
+except Exception:  # ImportError and any runtime import issues from vllm
+    Alpaca = Vicuna = Baize = StableVicuna = Koala = GPT4ALL = Wizard = Guanaco = Llama2 = None
+    Dolly = StableLM = MPT = Mistral = None
+    _VLLM_AVAILABLE = False
 from .llm_worker import RwkvModel, OASST, ChatGLM, FastChatT5
 
 logger = get_logger(__name__)
@@ -29,25 +37,38 @@ LLM_NAME_TO_CLASS = OrderedDict(
         ("gpt4", GPT4),
         ("gpt35_wosys", GPT35WOSystem),
         ("gpt4_wosys", GPT4WOSystem),
-        ("alpaca", Alpaca),
-        ("vicuna", Vicuna),
-        ("baize", Baize),
-        ("stablelm", StableLM),
-        ("stablevicuna", StableVicuna),
-        ("dolly", Dolly),
         ("rwkv", RwkvModel),
         ("oasst", OASST),
         ("chatglm", ChatGLM),
-        ("koala", Koala),
-        ("mpt", MPT),
         ("t5", FastChatT5),
-        ("gpt4all", GPT4ALL),
-        ("wizard", Wizard),
-        ("guanaco", Guanaco),
-        ("llama2", Llama2),
-        ("mistral", Mistral),
     ]
 )
+
+# Register vLLM-based models only when available
+if _VLLM_AVAILABLE:
+    LLM_NAME_TO_CLASS.update(
+        OrderedDict(
+            [
+                ("alpaca", Alpaca),
+                ("vicuna", Vicuna),
+                ("baize", Baize),
+                ("stablelm", StableLM),
+                ("stablevicuna", StableVicuna),
+                ("dolly", Dolly),
+                ("koala", Koala),
+                ("mpt", MPT),
+                ("gpt4all", GPT4ALL),
+                ("wizard", Wizard),
+                ("guanaco", Guanaco),
+                ("llama2", Llama2),
+                ("mistral", Mistral),
+            ]
+        )
+    )
+else:
+    logger.warning(
+        "vLLM-based models are unavailable (vllm not installed). Install with 'pip install .[gpu]' to enable."
+    )
 
 
 class AutoLLM:

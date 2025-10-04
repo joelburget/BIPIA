@@ -4,8 +4,6 @@
 from functools import partial
 import jsonlines
 import logging
-import json
-import numpy as np
 from tqdm import tqdm
 from pathlib import Path
 import copy

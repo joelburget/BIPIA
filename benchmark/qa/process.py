@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import re
+import os
 import jsonlines
 from datasets import load_dataset
 import string
@@ -11,14 +12,38 @@ import hashlib
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_dir", type=str)
+parser.add_argument("--data_dir", type=str, help="Path to local NewsQA data directory (containing combined-newsqa-data-v1.csv)")
 args = parser.parse_args()
 
-newsqa = load_dataset("newsqa", "combined-csv", data_dir=args.data_dir)
+# Prefer local combined CSV if available; otherwise, try HF's default config.
+data_dir = args.data_dir or os.path.join(os.path.dirname(__file__), "newsqa")
+combined_csv = os.path.join(data_dir, "combined-newsqa-data-v1.csv")
+
+newsqa = None
+if os.path.exists(combined_csv):
+    # Load directly from the local combined CSV
+    newsqa = load_dataset("csv", data_files={"train": combined_csv})
+else:
+    # Fallback: try the HF loader with available configs
+    try:
+        newsqa = load_dataset("newsqa", data_dir=data_dir)
+    except Exception:
+        try:
+            newsqa = load_dataset("newsqa", "default", data_dir=data_dir)
+        except Exception as e:
+            raise RuntimeError(
+                f"Could not load NewsQA dataset. Ensure {combined_csv} exists or provide --data_dir. Original error: {e}"
+            )
 
 
 def process_answer(example):
-    example["parsed_answer"] = eval(example["answer_char_ranges"])
+    val = example.get("answer_char_ranges")
+    if isinstance(val, str):
+        example["parsed_answer"] = [val]
+    elif isinstance(val, list):
+        example["parsed_answer"] = val
+    else:
+        example["parsed_answer"] = []
     return example
 
 
@@ -51,7 +76,9 @@ def process_answer1(example):
     return example
 
 
-newsqa = newsqa.map(process_answer, remove_columns=["answer_char_ranges", "story_id"])
+# Remove only columns that exist (for robustness across loaders)
+cols_to_remove = [c for c in ["answer_char_ranges", "story_id"] if c in newsqa["train"].column_names]
+newsqa = newsqa.map(process_answer, remove_columns=cols_to_remove)
 
 with open("./index.json", "r") as f:
     indexes = json.load(f)

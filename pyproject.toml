@@ -17,7 +17,6 @@ dependencies = [
     "py-cpuinfo",
     "torch>=2.0.1",
     "fschat>=0.2.35",
-    "deepspeed>=0.9.5",
     "transformers>=4.34.0",
     "accelerate>=0.15.0",
     "datasets>=2.8.0",
@@ -27,7 +26,6 @@ dependencies = [
     "tqdm",
     "wandb",
     "peft",
-    "vllm>=0.2.0",
     "numpy",
     "langdetect",
     "thefuzz",
@@ -42,6 +40,13 @@ Homepage = "https://github.com/microsoft/BIPIA"
 Documentation = "https://github.com/microsoft/BIPIA"
 Source = "https://github.com/microsoft/BIPIA"
 Tracker = "https://github.com/microsoft/BIPIA/issues"
+
+[project.optional-dependencies]
+# GPU-related extras (optional). Install with: pip install .[gpu]
+gpu = [
+    "vllm>=0.6.0",
+    "deepspeed>=0.9.5",
+]
 
 [tool.setuptools.packages.find]
 exclude = ["tests", "examples", "defense", "config", "benchmark"]
