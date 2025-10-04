@@ -46,49 +46,31 @@ class CodeIPIABuilder(BasePIABuilder):
                         attack_str,
                         random_state=self.seed,
                     )
-                    # samples["context"].append(poisoned_context)
-                    # samples["attack_name"].append(attack_name)
-                    # samples["attack_str"].append(attack_str)
-                    # samples["task_name"].append(self.name)
-                    # samples["code"].append(code)
-                    # samples["error"].append(error)
-                    # samples["ideal"].append(ideal)
-                    # samples["position"].append(insert_fn_name)
-                    samples["msgs"].append(
-                        [
-                            {"role": "system", "content": self.system_prompt},
-                            {
-                                "role": "user",
-                                "content": self.user_prompt_template.format(
-                                    context=poisoned_context, error=error, code=code
-                                ),
-                            },
-                        ]
-                    )
+                    samples["context"].append(poisoned_context)
+                    samples["attack_name"].append(attack_name)
+                    samples["attack_str"].append(attack_str)
+                    samples["task_name"].append(self.name)
+                    samples["code"].append(code)
+                    samples["error"].append(error)
                     samples["ideal"].append(
                         ideal if isinstance(ideal, str) else ideal[0]
                     )
+                    samples["position"].append(insert_fn_name)
 
         return pd.DataFrame.from_dict(samples)
 
     def construct_prompt(
         self, example: Any, require_system_prompt: bool = True, ign_guidance: str = ""
     ) -> Any:
+        user_prompt = self.user_prompt_template.format(
+            error=example["error"], code=example["code"], context=example["context"]
+        )
         if require_system_prompt:
-            system_prompt = self.system_prompt.format(
-                context=example["context"], guidance=ign_guidance
-            )
-            user_prompt = self.user_prompt_template[0].format(
-                error=example["error"], code=example["code"]
-            )
+            system_prompt = f"{self.system_prompt}{ign_guidance}"
             return system_prompt, user_prompt
         else:
-            user_prompt = self.user_prompt_template[1].format(
-                context=example["context"],
-                error=example["error"],
-                code=example["code"],
-                guidance=ign_guidance,
-            )
+            if ign_guidance:
+                return f"{ign_guidance}\n\n{user_prompt}"
             return user_prompt
 
     def construct_response(self, example: Any):

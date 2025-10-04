@@ -110,28 +110,14 @@ class QAPIABuilder(BasePIABuilder):
                     poisoned_context = insert_fn(
                         context, attack_str, random_state=self.seed
                     )
-                    samples["msgs"].append(
-                        [
-                            {"role": "system", "content": self.system_prompt},
-                            {
-                                "role": "user",
-                                "content": self.user_prompt_template.format(
-                                    context=poisoned_context,
-                                    question=question.removeprefix("Q: ").removeprefix(
-                                        "Question: "
-                                    ),
-                                ),
-                            },
-                        ]
-                    )
-                    # samples["context"].append(poisoned_context)
-                    # samples["attack_name"].append(attack_name)
-                    # samples["attack_str"].append(attack_str)
-                    # samples["task_name"].append(self.name)
+                    samples["context"].append(poisoned_context)
+                    samples["attack_name"].append(attack_name)
+                    samples["attack_str"].append(attack_str)
+                    samples["task_name"].append(self.name)
                     samples["ideal"].append(
                         ideal if isinstance(ideal, str) else ideal[0]
                     )
-                    # samples["question"].append(question)
-                    # samples["position"].append(insert_fn_name)
+                    samples["question"].append(question)
+                    samples["position"].append(insert_fn_name)
 
         return pd.DataFrame.from_dict(samples)

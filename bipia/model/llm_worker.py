@@ -280,7 +280,7 @@ class OASST(LLMModel):
 
 
 class Gemma(LLMModel):
-    require_system_prompt = False
+    require_system_prompt = True
 
 
 class ChatGLM(LLMModel):
