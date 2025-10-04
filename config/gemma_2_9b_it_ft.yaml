@@ -1,3 +1,3 @@
 load_8bit: False
 model_name: joelb/gemma-ft-lora
-llm_name: "gemma"
+llm_name: "special_token_gemma"

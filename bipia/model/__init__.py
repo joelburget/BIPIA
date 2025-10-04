@@ -31,7 +31,7 @@ except Exception:  # ImportError and any runtime import issues from vllm
     ) = None
     Dolly = StableLM = MPT = Mistral = None
     _VLLM_AVAILABLE = False
-from .llm_worker import RwkvModel, OASST, ChatGLM, FastChatT5, Gemma
+from .llm_worker import RwkvModel, OASST, ChatGLM, FastChatT5, Gemma, SpecialTokenGemma
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +46,7 @@ LLM_NAME_TO_CLASS = OrderedDict(
         ("chatglm", ChatGLM),
         ("t5", FastChatT5),
         ("gemma", Gemma),
+        ("special_token_gemma", SpecialTokenGemma),
     ]
 )
 

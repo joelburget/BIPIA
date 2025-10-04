@@ -17,6 +17,7 @@ from transformers import (
     AutoModelForSeq2SeqLM,
 )
 from peft import PeftModel
+from tokenizers import AddedToken
 
 import fastchat.model
 
@@ -281,6 +282,32 @@ class OASST(LLMModel):
 
 class Gemma(LLMModel):
     require_system_prompt = True
+
+
+class SpecialTokenGemma(LLMModel):
+    require_system_prompt = True
+
+    def load_tokenizer(self):
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.config["model_name"],
+            use_fast=False,
+            token=self.config.get("auth_token", None),
+            trust_remote_code=self.config.get("trust_remote_code", False),
+        )
+        self.tokenizer.padding_side = "left"
+        self.tokenizer.add_special_tokens(
+            {
+                "additional_special_tokens": [
+                    AddedToken(
+                        "<|begin_embed|>", normalized=False, lstrip=False, rstrip=False
+                    ),
+                    AddedToken(
+                        "<|end_embed|>", normalized=False, lstrip=False, rstrip=False
+                    ),
+                ]
+            }
+        )
+        return self.tokenizer
 
 
 class ChatGLM(LLMModel):
