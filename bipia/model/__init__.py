@@ -23,12 +23,15 @@ try:
         Llama2,
     )
     from .vllm_worker import Dolly, StableLM, MPT, Mistral
+
     _VLLM_AVAILABLE = True
 except Exception:  # ImportError and any runtime import issues from vllm
-    Alpaca = Vicuna = Baize = StableVicuna = Koala = GPT4ALL = Wizard = Guanaco = Llama2 = None
+    Alpaca = Vicuna = Baize = StableVicuna = Koala = GPT4ALL = Wizard = Guanaco = (
+        Llama2
+    ) = None
     Dolly = StableLM = MPT = Mistral = None
     _VLLM_AVAILABLE = False
-from .llm_worker import RwkvModel, OASST, ChatGLM, FastChatT5
+from .llm_worker import RwkvModel, OASST, ChatGLM, FastChatT5, Gemma
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +45,7 @@ LLM_NAME_TO_CLASS = OrderedDict(
         ("oasst", OASST),
         ("chatglm", ChatGLM),
         ("t5", FastChatT5),
+        ("gemma", Gemma),
     ]
 )
 

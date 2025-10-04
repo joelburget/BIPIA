@@ -279,6 +279,10 @@ class OASST(LLMModel):
         return self.tokenizer
 
 
+class Gemma(LLMModel):
+    require_system_prompt = False
+
+
 class ChatGLM(LLMModel):
     require_system_prompt = False
 
