@@ -18,7 +18,7 @@ from transformers import (
 )
 from peft import PeftModel
 
-# import fastchat.model
+import fastchat.model
 
 from .base import BaseModel
 from .utils import EndOfFunctionCriteria
